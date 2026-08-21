@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="title" content="Stop & Go - Gamifikasi Edukasi Rambu Lalu Lintas">
+<meta name="description" content="Media pembelajaran interaktif berbasis game ular tangga online untuk mengenalkan dan menguji pemahaman rambu lalu lintas secara menyenangkan.">
+<meta name="keywords" content="ular tangga, rambu lalu lintas, game edukasi, safety riding, stop and go">
+<meta name="author" content="Fadhil">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stop & Go - Gamifikasi Edukasi Rambu Lalu Lintas">
+<meta property="og:description" content="Mainkan game ular tangga interaktif dan uji pengetahuanmu tentang rambu lalu lintas jalan raya!">
+  
+<title>Stop & Go - Gamifikasi Edukasi Rambu Lalu Lintas</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= TOP BAR ================= -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">🚦</span>
+      <div>
+        <h1>Stop & Go</h1>
+        <p>Gamifikasi Edukasi Rambu Lalu Lintas Berbasis Ular Tangga Online</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="mode-tag" id="modeTag">Mode: —</span>
+      <button class="btn-ghost" id="btnRules">📜 Aturan</button>
+      <button class="btn-ghost" id="btnRestart">🔄 Ulangi</button>
+      <button class="btn-ghost" id="btnHome">🏠 Mode</button>
+    </div>
+  </header>
+
+  <!-- ================= LAYOUT UTAMA ================= -->
+  <main class="layout">
+
+    <!-- KIRI : PAPAN 10x10 -->
+    <section class="board-zone">
+      <div class="board-frame">
+        <div class="board" id="board"><!-- petak digambar oleh app.js --></div>
+      </div>
+    </section>
+
+    <!-- KANAN : CONTROL PANEL -->
+    <aside class="panel">
+
+      <div class="panel-section players">
+        <div class="pcard" id="pcard0">
+          <span class="avatar" id="avatar0">🚗</span>
+          <div class="pinfo">
+            <b id="name0">Pemain 1</b>
+            <small>Petak <span id="pos0">0</span> · Poin <span id="pts0">0</span></small>
+          </div>
+          <span class="turn-chip">GILIRAN</span>
+        </div>
+        <div class="pcard" id="pcard1">
+          <span class="avatar" id="avatar1">🚙</span>
+          <div class="pinfo">
+            <b id="name1">Pemain 2</b>
+            <small>Petak <span id="pos1">0</span> · Poin <span id="pts1">0</span></small>
+          </div>
+          <span class="turn-chip">GILIRAN</span>
+        </div>
+      </div>
+
+      <div class="panel-section dice-area">
+        <div class="dice" id="dice"></div>
+        <button class="btn-roll" id="rollBtn">🎲 Lempar Dadu</button>
+      </div>
+
+      <div class="panel-section deck-area">
+        <div class="deck-pile" id="deckPile">
+          <div class="dcard c3"></div>
+          <div class="dcard c2"></div>
+          <div class="dcard c1"><span>❓</span></div>
+          <span class="deck-count" id="deckCount">24</span>
+        </div>
+        <div class="deck-info">
+          <b>Tumpukan Kartu Soal</b>
+          <small>Jawab benar untuk naik tangga &amp; lolos ular!</small>
+        </div>
+      </div>
+
+      <div class="panel-section log-area">
+        <h3>📋 Catatan Permainan</h3>
+        <ul id="logList"></ul>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- ================= MODAL KARTU SOAL (3D FLIP) ================= -->
+  <div class="modal" id="quizModal">
+    <div class="card3d" id="quizCard">
+
+      <div class="face front">
+        <div class="quiz-head">
+          <span class="quiz-cat" id="quizCat">❓ Kartu Soal</span>
+          <span class="quiz-turn" id="quizTurn">🚗 Pemain 1</span>
+        </div>
+
+        <div class="sign-visual" id="quizSign">
+          <!-- <img src="assets/rambu/....png"> + fallback diisi app.js -->
+        </div>
+        <div class="sign-src" id="quizSrc"></div>
+
+        <p class="quiz-q" id="quizText"></p>
+        <div class="opts" id="quizOpts"></div>
+        <div class="quiz-feedback" id="quizFb"></div>
+      </div>
+
+      <div class="face back">
+        <div class="back-inner">
+          <div class="back-lights"><i></i><i></i><i></i></div>
+          <h2>KARTU SOAL</h2>
+          <p>Rambu Lalu Lintas</p>
+          <span class="back-q">❓</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= MODAL MENANG ================= -->
+  <div class="modal" id="winModal">
+    <div class="win-card">
+      <div class="win-trophy">🏆</div>
+      <h2>Menang!</h2>
+      <p class="win-name" id="winnerName">🚗 Pemain 1</p>
+      <p class="win-pts" id="winnerPts">0 poin</p>
+      <div class="win-actions">
+        <button class="btn-primary" id="btnReplay">🔄 Main Lagi</button>
+        <button class="btn-ghost dark" id="btnChangeMode">🏠 Ganti Mode</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL ATURAN ================= -->
+  <div class="modal" id="rulesModal">
+    <div class="rules-card">
+      <h2>📜 Aturan Permainan</h2>
+      <ul>
+        <li>🎲 Lempar dadu, maju sesuai angka. Petak <b>100</b> harus dicapai <b>tepat</b> (jika kelebihan, tetap di tempat).</li>
+        <li>🃏 Mendarat di <b>petak rambu</b> (kuning) membuka kartu soal pilihan ganda A/B/C/D.</li>
+        <li>🪜 <b>Tangga</b>: hanya bisa naik jika menjawab soal dengan <b>benar</b>.</li>
+        <li>🐍 <b>Kepala ular</b>: jawab benar = selamat; jawab salah = meluncur turun ke ekor.</li>
+        <li>⛔ Salah menjawab soal <b>rambu larangan</b> = penalti <b>mundur 2 langkah</b>.</li>
+        <li>⭐ Setiap jawaban benar mendapat <b>+10 poin</b>. Pemain pertama di petak 100 menang!</li>
+        <li>🖼️ Gambar rambu dibaca dari <code>assets/rambu/*.png</code> — jika belum ada, ikon rambu standar ditampilkan otomatis (fallback).</li>
+      </ul>
+      <button class="btn-primary" id="btnCloseRules">Mengerti, lanjut! ✅</button>
+    </div>
+  </div>
+
+  <!-- ================= OVERLAY PILIH MODE ================= -->
+  <div class="modal show" id="modeOverlay">
+    <div class="mode-card">
+      <div class="mode-logo">🚦🐍🪜</div>
+      <h2>Stop & Go</h2>
+      <p>Naik tangga dengan menjawab soal rambu, hati-hati dengan ular &amp; rambu larangan! Pilih mode bermain:</p>
+      <div class="mode-actions">
+        <button class="btn-mode" id="btnPvp">
+          <span class="bm-ico">👥</span>
+          <b>2 Pemain</b>
+          <small>Pass &amp; Play bergantian</small>
+        </button>
+        <button class="btn-mode" id="btnCpu">
+          <span class="bm-ico">🤖</span>
+          <b>Pemain vs CPU</b>
+          <small>Lawan komputer</small>
+        </button>
+      </div>
+      <small class="mode-note">💡 Gambar rambu opsional — game tetap berjalan penuh secara offline berkat ikon fallback.</small>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
+
+          
